@@ -1,38 +1,44 @@
-import React, { useContext, useState } from 'react';
-import { AppContext } from '../context/AppContext';
+import React, {useContext, useState} from 'react';
+import {AppContext} from '../context/AppContext';
 
 const Budget = () => {
-    const { expenses } = useContext(AppContext);
-    const [budget, setBudget] = useState('');
+    const {budget, dispatch, totalExpenses} = useContext(AppContext);
 
-    function handleChange(e) {
-        e.preventDefault();
+    const handleChange = (event) => {
+        const newBudget = event.target.value;
+        const maxBudget = 20000;
 
-        if(budget < expenses) {
-            alert("The budget cannot be less than the existing expenses of £"+expenses);
-            return;
+        if(newBudget > maxBudget)
+        {
+            alert('Budget cannot exceed £' + maxBudget);
         }
-        let maxBudget = 20000;
-        if(budget > maxBudget) {
-            alert("The budget cannot exceed £"+maxBudget);
-            return;
+        else if(newBudget < totalExpenses)
+        {
+            alert('You cannot reduce the value lower than the spending £' + totalExpenses);
         }
-        console.log(budget.value);
-        setBudget(budget.value);
+        else
+        {
+            dispatch({
+                type:    'SET_BUDGET',
+                payload: newBudget,
+            });
+        }
+    }
 
-      }
+
     return (
         <div className='alert alert-secondary'>
-            <span>Budget: £
-                <form onChange={handleChange}>
+                <form>
+                    <label htmlFor="budget">Budget: £ </label>
                     <input
-                    type="number"
-                    onChange={(e) => handleChange(e.target.value)}
-                    value={budget}
-                    step="10"
+                        style={{width: '70%'}}
+                        name="budget"
+                        type="number"
+                        onInput={handleChange}
+                        value={budget}
+                        step="10"
                     />
                 </form>
-          </span>
         </div>
     );
 };
